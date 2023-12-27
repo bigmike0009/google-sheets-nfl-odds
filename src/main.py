@@ -1,7 +1,7 @@
 import functions_framework
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-import oddsApi
+import src.oddsApi as oddsApi
 from datetime import datetime, timedelta
 
 OPENINGWEEK=datetime.strptime('5 Sep 2023', '%d %b %Y')
