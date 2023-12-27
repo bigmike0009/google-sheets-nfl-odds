@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import datetime, timedelta
 import dateutil.tz
+import os
 BOOKMAP = {'DraftKings':'dk', 'Bovada':'bov', 'FanDuel':'fd'}
 
 def format_to_sheets():
@@ -108,7 +109,7 @@ def fetchOdds(sport_key='americanfootball_nfl'):
 
 def requestOddsApi(sport_key='football_nfl', market='h2h,spreads,totals'):
     
-    api_key = 'e26d8f8a7475a9a7ce69156c4f3d3d8e'
+    api_key = os.environ['ODDS_API_KEY_SECRET']
     #TODO free subscription api key, but still upload this to GCP secret manager
     day_of_week = datetime.now().weekday()
     days_until_next_week_of_football = 9 - day_of_week
