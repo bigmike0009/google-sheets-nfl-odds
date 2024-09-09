@@ -1,10 +1,10 @@
 import functions_framework
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-import src.oddsApi as oddsApi
+import oddsApi as oddsApi
 from datetime import datetime, timedelta
 
-OPENINGWEEK=datetime.strptime('5 Sep 2023', '%d %b %Y')
+OPENINGWEEK=datetime.strptime('5 Sep 2024', '%d %b %Y')
 
 CURRDT = datetime.now()
 CURRWEEK = int(((CURRDT - OPENINGWEEK).days) / 7) + 1
@@ -12,7 +12,7 @@ CURRWEEK = int(((CURRDT - OPENINGWEEK).days) / 7) + 1
 @functions_framework.http
 def hello_http(request):
     result=''
-    spreadsheet_id = '12OXqgoflzyg7yv_vl8-6-jABkbR57gfpv-8rEE-J9cc'
+    spreadsheet_id = '1dlcPCLbLOma94nI2j6HJ71_ubqVKR7uBze3KSo7rsUI'
     # For example:
     # spreadsheet_id = "8VaaiCuZ2q09IVndzU54s1RtxQreAxgFNaUPf9su5hK0"
 
@@ -86,7 +86,7 @@ def append_new_rows(gameData, service, spreadsheet_id):
     }
     return service.spreadsheets().values().append(
             spreadsheetId=spreadsheet_id,
-            range=f'Week {CURRWEEK}!A2:F2',
+            range=f'Week {CURRWEEK}!A2:G2',
             valueInputOption="USER_ENTERED",
             insertDataOption="INSERT_ROWS",
             body=body
@@ -101,15 +101,15 @@ def copy_formula_for_rows(service, newSheetID, numGames, spreadsheet_id):
           "sheetId": newSheetID,
           "startRowIndex": 1,
           "endRowIndex": 2,
-          "startColumnIndex": 10,
-          "endColumnIndex": 11
+          "startColumnIndex": 11,
+          "endColumnIndex": 12
         },
         "destination": {
           "sheetId": newSheetID,
           "startRowIndex": 2,
           "endRowIndex": 2 + numGames,
-          "startColumnIndex": 10,
-          "endColumnIndex": 11
+          "startColumnIndex": 11,
+          "endColumnIndex": 12
         },
         "pasteType": "PASTE_FORMULA",
         "pasteOrientation": "NORMAL"
@@ -126,8 +126,8 @@ def add_dropdowns(service, newSheetID, spreadsheet_id, numgames):
             "sheetId": newSheetID,
             "startRowIndex": i,
             "endRowIndex": i+1,
-            "startColumnIndex": 6,
-            "endColumnIndex": 10
+            "startColumnIndex": 7,
+            "endColumnIndex": 11
         }
 
         requests.append({

@@ -3,6 +3,8 @@ import json
 from datetime import datetime, timedelta
 import dateutil.tz
 import os
+from weatherApi import get_weather
+
 BOOKMAP = {'DraftKings':'dk', 'Bovada':'bov', 'FanDuel':'fd'}
 
 def format_to_sheets():
@@ -22,7 +24,12 @@ def format_to_sheets():
 
         over = res[matchup]['totals']['amount']
 
-        resArray.append([matchup.split( ' @ ')[0], matchup.split( ' @ ')[1], spreadLine, ml + f' ({mlBook})', str(over) + f' ({overBook})', res[matchup]['kickoff']])
+        home_team = matchup.split( ' @ ')[1].rsplit(' ', 1)[1]
+        kickoff = res[matchup]['kickoff']
+
+        weather = get_weather(home_team, kickoff)
+
+        resArray.append([matchup.split( ' @ ')[0], matchup.split( ' @ ')[1], spreadLine, ml + f' ({mlBook})', str(over) + f' ({overBook})', res[matchup]['kickoff'].strftime('%a %I:%M%p'), weather])
     print(resArray)
     return resArray
 
@@ -47,7 +54,7 @@ def fetchOdds(sport_key='americanfootball_nfl'):
         gameTime = dirty_utc_to_time(matchup['commence_time'])
 
         matchID = away_team + ' @ ' + home_team 
-        resultDict[matchID] = {'kickoff':gameTime.strftime('%a %I:%M%p')}
+        resultDict[matchID] = {'kickoff':gameTime}
 
         bestOdds = {'h2h':{'BookAway': 'N/A', 'OddsAway': -
                     99999, 'BookHome': 'N/A', 'OddsHome': -99999},
@@ -109,7 +116,7 @@ def fetchOdds(sport_key='americanfootball_nfl'):
 
 def requestOddsApi(sport_key='football_nfl', market='h2h,spreads,totals'):
     
-    api_key = os.environ['ODDS_API_KEY_SECRET']
+    api_key = os.environ['ODDS_API_API_SECRET']
     #TODO free subscription api key, but still upload this to GCP secret manager
     day_of_week = datetime.now().weekday()
     days_until_next_week_of_football = 9 - day_of_week
@@ -125,4 +132,4 @@ def requestOddsApi(sport_key='football_nfl', market='h2h,spreads,totals'):
     odds_response = requests.get(request_string)
     gamesArray = json.loads(odds_response.text)
     
-    return gamesArray   
+    return gamesArray  

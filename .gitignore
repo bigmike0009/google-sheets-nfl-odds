@@ -1,0 +1,3 @@
+gsheetsenv/
+venv/
+*.pyc
